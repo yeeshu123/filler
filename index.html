@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAHU GSK ID Print V1.0</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    /* ===============================
+       PREMIUM UI REVAMP (SAHU GSK)
+    ================================ */
+
+    :root {
+        --bg-app: linear-gradient(180deg, #eef2ff, #f8fafc);
+        --panel: rgba(255,255,255,0.85);
+        --panel-solid: #ffffff;
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --danger: #ef4444;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border: rgba(15,23,42,0.08);
+        --radius: 14px;
+        --sidebar-width: 340px;
+    }
+
+    * { box-sizing: border-box; outline: none; }
+
+    body {
+        font-family: 'Inter', system-ui, sans-serif;
+        margin: 0;
+        background: var(--bg-app);
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+    }
+
+    /* LAYOUT */
+    .sidebar {
+        width: var(--sidebar-width);
+        background: var(--panel);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 8px 0 40px rgba(0,0,0,0.06);
+        z-index: 20;
+    }
+
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    /* HEADER */
+    .header-row {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    h1 {
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: .05em;
+        color: var(--primary);
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    /* TOOLBAR */
+    .toolbar {
+        height: 52px;
+        background: var(--panel-solid);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        font-size: 13px;
+    }
+
+    /* BUTTONS */
+    .btn {
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all .15s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), #6366f1);
+        color: white;
+        border: none;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--primary-hover), #4f46e5);
+        color: white;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-danger {
+        background: #fee2e2;
+        border-color: #fecaca;
+        color: var(--danger);
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        color: white;
+        border: none;
+        width: 100%;
+        height: 48px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: auto;
+    }
+    .btn-save:hover { box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+
+    .btn-print {
+        background: white;
+        border: 1px solid var(--border);
+        width: 100%;
+        height: 40px;
+        margin-top: 10px;
+        color: var(--text-main);
+    }
+
+    .btn-full { width: 100%; }
+
+    /* MODE SWITCH */
+    .mode-switch {
+        display: flex;
+        background: rgba(0,0,0,0.04);
+        padding: 4px;
+        margin: 16px 20px;
+        border-radius: 12px;
+    }
+
+    .mode-tab {
+        flex: 1;
+        text-align: center;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-muted);
+        border-radius: 9px;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+
+    .mode-tab.active {
+        background: white;
+        color: var(--primary);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    /* PANELS */
+    .scroll-panel {
+        padding: 0 20px 20px;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .control-group { margin-bottom: 16px; }
+
+    h2 {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        margin: 24px 0 12px;
+        opacity: 0.7;
+    }
+
+    label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+
+    /* INPUTS */
+    input, select, textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #f8fafc;
+        font-size: 13px;
+        font-family: inherit;
+        transition: all .2s ease;
+        color: var(--text-main);
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(79,70,229,.1);
+    }
+    
+    input[type="color"] { padding: 4px; height: 40px; cursor: pointer; }
+    textarea { resize: vertical; min-height: 40px; }
+
+    /* CANVAS AREA */
+    .canvas-area {
+        flex: 1;
+        background: radial-gradient(#cbd5e1 1px, transparent 1px), #f1f5f9;
+        background-size: 24px 24px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #canvas-wrapper {
+        background: white;
+        box-shadow: 0 30px 80px -10px rgba(0,0,0,.15), 0 0 0 1px rgba(0,0,0,.02);
+        position: absolute;
+        transform-origin: 0 0;
+        transition: transform .08s ease-out;
+    }
+
+    /* =========================================
+       FUNCTIONAL CSS (REQUIRED FOR LOGIC)
+       (Merged to ensure app works correctly)
+    ========================================= */
+    
+    /* Designer Elements */
+    .designer-field {
+        position: absolute; cursor: grab; user-select: none;
+        display: flex; align-items: flex-start; /* Top align fix */
+        overflow: hidden; box-sizing: border-box;
+        border: 1px dashed transparent;
+        border-radius: 6px;
+        white-space: pre-wrap; word-break: break-word;
+        transition: background .1s, border-color .1s;
+    }
+    
+    .designer-field:hover {
+        box-shadow: 0 0 0 1px var(--primary);
+        background: rgba(79,70,229,.05);
+    }
+
+    .designer-field.selected {
+        box-shadow: 0 0 0 2px var(--primary), 0 10px 25px rgba(79,70,229,.2);
+        background: rgba(255, 255, 255, 0.5);
+        z-index: 1000 !important;
+    }
+    
+    .designer-field.is-static {
+        border: 1px dashed #94a3b8;
+        background: rgba(241, 245, 249, 0.5);
+    }
+    .designer-field.is-static::after {
+        content: "🔒"; position: absolute; top: 2px; right: 2px; font-size: 10px; opacity: 0.5;
+    }
+
+    /* Live Fields (Fill Mode) */
+    .live-field { 
+        position: absolute; pointer-events: none;
+        display: flex; align-items: flex-start;
+        overflow: hidden; white-space: pre-wrap; word-break: break-word;
+    }
+    .live-photo { position: absolute; display: block; }
+
+    /* Smart Guides */
+    .guide-line { position: absolute; background: #f97316; z-index: 9999; pointer-events: none; }
+    .guide-v { width: 1px; height: 10000px; top: -5000px; }
+    .guide-h { height: 1px; width: 10000px; left: -5000px; }
+
+    /* Resize Handles */
+    .resize-handle {
+        width: 10px; height: 10px; background: white;
+        position: absolute; bottom: -5px; right: -5px;
+        border-radius: 50%; cursor: nwse-resize;
+        border: 2px solid var(--primary);
+        display: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .designer-field.selected .resize-handle { display: block; }
+
+    /* Properties Panel */
+    #properties-panel {
+        display: none;
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 20px;
+        border: 1px solid var(--border);
+        box-shadow: 0 15px 40px rgba(0,0,0,.08);
+        position: relative;
+    }
+    
+    .prop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* Panning State */
+    body.pan-ready .canvas-area { cursor: grab; }
+    body.pan-active .canvas-area { cursor: grabbing; }
+
+    /* Print Hiding */
+    @media print {
+        body { background: white; visibility: hidden; }
+        .sidebar, .toolbar { display: none !important; }
+        .canvas-area { background: white; padding: 0; margin: 0; display: block; position: absolute; top: 0; left: 0; height: auto; overflow: visible; }
+        #canvas-wrapper { 
+            visibility: visible; box-shadow: none; margin: 0; position: absolute; top: 0; left: 0; 
+            transform: none !important; 
+            -webkit-print-color-adjust: exact; print-color-adjust: exact; 
+        }
+    }
+</style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="header-row">
+            <h1>SAHU GSK ID PRINT <span style="font-size:10px; opacity:0.6; margin-left:4px;">V1.0</span></h1>
+            <div style="display:flex; gap:6px;">
+                <button class="btn" onclick="exportConfigs()" title="Backup Data">⬇</button>
+                <button class="btn" onclick="document.getElementById('importFile').click()" title="Restore Data">⬆</button>
+                <input type="file" id="importFile" style="display:none" accept=".json" onchange="importConfigs(this.files[0])">
+            </div>
+        </div>
+
+        <div class="mode-switch">
+            <div class="mode-tab active" onclick="switchMode('design')">Design</div>
+            <div class="mode-tab" onclick="switchMode('fill')">Fill & Print</div>
+        </div>
+
+        <div id="panel-design" class="scroll-panel">
+            
+            <div class="control-group" style="background: rgba(255,255,255,0.6); padding:10px; border-radius:10px; border:1px solid var(--border);">
+                <label>📁 Load Template</label>
+                <div style="display:flex; gap:6px;">
+                    <select id="editConfigSelect"></select>
+                    <button class="btn btn-primary" onclick="loadDesignToEdit()">Load</button>
+                    <button class="btn btn-danger" onclick="deleteConfig()" title="Delete">🗑</button>
+                </div>
+            </div>
+
+            <h2>Setup</h2>
+            <div class="control-group">
+                <button class="btn btn-full" onclick="document.getElementById('templateInput').click()">🖼️ Upload Background</button>
+                <input type="file" id="templateInput" hidden accept="image/*" onchange="loadBg(this.files[0])">
+            </div>
+
+            <h2>Elements</h2>
+            <div class="control-group">
+                <input type="text" id="newFieldName" placeholder="Element Name (e.g. Name)">
+                <div style="display:flex; gap:6px; margin-top:8px;">
+                    <button class="btn" style="flex:1" onclick="addField('text')">Text</button>
+                    <button class="btn" style="flex:1" onclick="addField('photo')">Photo</button>
+                    <button class="btn" style="flex:1" onclick="addField('qr')">QR</button>
+                </div>
+            </div>
+
+            <div id="properties-panel">
+                <div class="control-group">
+                    <label>Content / Label</label>
+                    <textarea id="prop-text" rows="2" onfocus="pushHistory()" oninput="updateProp('name', this.value)"></textarea>
+                </div>
+
+                <div id="prop-text-features">
+                    <div class="control-group" style="background: #f1f5f9; padding: 10px; border-radius: 8px;">
+                        <label style="display:flex; align-items:center; cursor:pointer; margin:0; color:var(--primary);">
+                            <input type="checkbox" id="prop-static" onchange="pushHistory(); updateProp('isStatic', this.checked)" style="width:auto; margin-right:8px;">
+                            Static Text (Fixed)
+                        </label>
+                    </div>
+
+                    <div class="control-group" id="prop-options-box" style="margin-top:10px;">
+                        <label>Dropdown Options</label>
+                        <textarea id="prop-options" placeholder="Option1, Option2..." rows="2" onfocus="pushHistory()" oninput="updateProp('options', this.value)"></textarea>
+                    </div>
+                </div>
+
+                <div id="prop-photo-features" style="display:none;">
+                    <div class="control-group">
+                        <label>Fit Mode</label>
+                        <select id="prop-fit" onchange="pushHistory(); updateProp('fit', this.value)">
+                            <option value="fill">Stretch (Exact)</option>
+                            <option value="cover">Crop (Cover)</option>
+                            <option value="contain">Fit (Contain)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="prop-grid">
+                    <div>
+                        <label>Size</label>
+                        <input type="number" id="prop-size" onfocus="pushHistory()" oninput="updateProp('fontSize', this.value)">
+                    </div>
+                    <div>
+                        <label>Opacity</label>
+                        <input type="number" id="prop-opacity" min="0" max="100" onfocus="pushHistory()" oninput="updateProp('opacity', this.value/100)">
+                    </div>
+                </div>
+
+                <div class="prop-grid" style="margin-top:10px;">
+                    <div>
+                        <label>Color</label>
+                        <input type="color" id="prop-color" onchange="pushHistory(); updateProp('color', this.value)">
+                    </div>
+                    <div>
+                        <label>Layer</label>
+                        <div style="display:flex; gap:4px;">
+                            <button class="btn" style="flex:1;" onclick="pushHistory(); moveLayer(-1)">▼</button>
+                            <button class="btn" style="flex:1;" onclick="pushHistory(); moveLayer(1)">▲</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group" style="margin-top:10px;">
+                    <label>Font</label>
+                    <select id="prop-font" onchange="pushHistory(); updateProp('fontFamily', this.value)">
+                        <option value="Inter, sans-serif">Inter</option>
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                    </select>
+                </div>
+
+                <div class="prop-grid">
+                    <div>
+                        <label>Weight</label>
+                        <select id="prop-weight" onchange="pushHistory(); updateProp('fontWeight', this.value)">
+                            <option value="normal">Normal</option>
+                            <option value="bold">Bold</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Style</label>
+                        <select id="prop-style" onchange="pushHistory(); updateProp('fontStyle', this.value)">
+                            <option value="normal">Normal</option>
+                            <option value="italic">Italic</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn btn-danger btn-full" style="margin-top:15px;" onclick="deleteSelected()">Remove Element</button>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <label>Save Template</label>
+                <div style="display:flex; gap:6px;">
+                    <input type="text" id="configName" placeholder="Template Name">
+                    <button class="btn btn-primary" onclick="saveConfig()">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="panel-fill" style="display:none; height:100%; flex-direction:column;">
+            <div style="padding: 20px 20px 0 20px;">
+                <div class="control-group">
+                    <label>Select Template</label>
+                    <select id="configSelect" onchange="loadConfig()"></select>
+                </div>
+                <div class="control-group">
+                    <label>Background (Optional)</label>
+                    <input type="file" onchange="loadBg(this.files[0])">
+                </div>
+                <hr style="border:0; border-top:1px solid var(--border); margin: 15px 0;">
+            </div>
+            
+            <div id="form-container" style="flex:1; overflow-y:auto; padding: 0 20px 20px 20px;">
+                <p style="text-align:center; color:#94a3b8; font-size:12px; margin-top:40px;">Select a template to begin</p>
+            </div>
+
+            <div style="padding:20px;">
+                <button class="btn btn-save" onclick="downloadImage()">Save Image</button>
+                <button class="btn btn-print" onclick="window.print()">Print / PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="toolbar">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button class="btn" onclick="toggleGrid()">Grid: <span id="gridStatus" style="font-weight:bold; color:var(--primary);">OFF</span></button>
+                <button class="btn" onclick="clearCanvas()">Clear</button>
+                <div style="height:20px; width:1px; background:var(--border); margin:0 5px;"></div>
+                <button class="btn" onclick="triggerUndo()">↩</button>
+                <button class="btn" onclick="triggerRedo()">↪</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:15px; color:var(--text-muted);">
+                <span><b>Alt + Drag</b> to Pan</span>
+                <span><b>Alt + Scroll</b> to Zoom</span>
+            </div>
+        </div>
+
+        <div class="canvas-area" id="canvas-area">
+            <div id="canvas-wrapper">
+                <img id="template-img" src="" style="opacity:0; width:100%; height:100%; position:absolute; top:0; left:0; pointer-events:none;"> 
+                <div id="layer-guides"></div>
+                <div id="layer-design"></div>
+                <div id="layer-fill"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // === CORE LOGIC (OFFLINE v9) ===
+    let fields = [];
+    let selectedId = null;
+    let gridEnabled = false;
+    
+    // History State
+    let historyStack = [];
+    let historyStep = -1;
+    const MAX_HISTORY = 50;
+
+    // Viewport State
+    let scale = 1;
+    let panX = 0; 
+    let panY = 40;
+    let isPanning = false;
+
+    window.onload = () => { 
+        refreshConfigLists();
+        centerCanvas();
+        setupInputHandlers();
+    }
+
+    function centerCanvas() {
+        const area = document.getElementById('canvas-area');
+        panX = (area.clientWidth - 600) / 2;
+        updateTransform();
+    }
+
+    function pushHistory() {
+        if(historyStep < historyStack.length - 1) {
+            historyStack = historyStack.slice(0, historyStep + 1);
+        }
+        historyStack.push(JSON.stringify(fields));
+        if(historyStack.length > MAX_HISTORY) historyStack.shift();
+        else historyStep++;
+    }
+
+    function triggerUndo() {
+        if(historyStep > 0) {
+            historyStep--;
+            fields = JSON.parse(historyStack[historyStep]);
+            if(selectedId && !fields.find(f => f.id === selectedId)) {
+                selectedId = null;
+                document.getElementById('properties-panel').style.display = 'none';
+            }
+            renderDesign();
+        }
+    }
+
+    function triggerRedo() {
+        if(historyStep < historyStack.length - 1) {
+            historyStep++;
+            fields = JSON.parse(historyStack[historyStep]);
+            renderDesign();
+        }
+    }
+
+    function setupInputHandlers() {
+        const area = document.getElementById('canvas-area');
+        area.addEventListener('wheel', (e) => {
+            if (e.altKey) {
+                e.preventDefault();
+                const zoomSpeed = 0.1;
+                const newScale = e.deltaY > 0 ? scale * (1 - zoomSpeed) : scale * (1 + zoomSpeed);
+                scale = Math.min(Math.max(newScale, 0.2), 5);
+                updateTransform();
+            }
+        }, { passive: false });
+
+        area.addEventListener('mousedown', (e) => {
+            if (e.altKey || e.button === 1) {
+                e.preventDefault();
+                isPanning = true;
+                document.body.classList.add('pan-active');
+                
+                const startX = e.clientX - panX;
+                const startY = e.clientY - panY;
+
+                const move = (ev) => {
+                    panX = ev.clientX - startX;
+                    panY = ev.clientY - startY;
+                    updateTransform();
+                };
+                const stop = () => {
+                    window.removeEventListener('mousemove', move);
+                    window.removeEventListener('mouseup', stop);
+                    document.body.classList.remove('pan-active');
+                    isPanning = false;
+                };
+                window.addEventListener('mousemove', move);
+                window.addEventListener('mouseup', stop);
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Alt') document.body.classList.add('pan-ready');
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); triggerUndo(); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); triggerRedo(); }
+            if (selectedId && document.getElementById('panel-design').style.display !== 'none' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                const f = fields.find(x => x.id === selectedId);
+                if (!f) return;
+                const step = e.shiftKey ? 10 : 1;
+                let changed = false;
+                if (e.key === 'ArrowUp') { f.y -= step; changed = true; }
+                if (e.key === 'ArrowDown') { f.y += step; changed = true; }
+                if (e.key === 'ArrowLeft') { f.x -= step; changed = true; }
+                if (e.key === 'ArrowRight') { f.x += step; changed = true; }
+                if (e.key === 'Delete') { deleteSelected(); changed = false; }
+                if (changed) { e.preventDefault(); renderDesign(); }
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'Alt') document.body.classList.remove('pan-ready');
+        });
+    }
+
+    function updateTransform() {
+        const wrap = document.getElementById('canvas-wrapper');
+        wrap.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+
+    function toggleGrid() {
+        gridEnabled = !gridEnabled;
+        const status = document.getElementById('gridStatus');
+        status.innerText = gridEnabled ? "ON" : "OFF";
+    }
+
+    function loadBg(file) {
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.getElementById('template-img');
+            img.src = e.target.result;
+            img.onload = () => {
+                const wrap = document.getElementById('canvas-wrapper');
+                wrap.style.width = img.naturalWidth + 'px';
+                wrap.style.height = img.naturalHeight + 'px';
+                img.style.opacity = 1;
+                if(img.naturalWidth > 1000) {
+                    scale = 0.5; 
+                    updateTransform();
+                }
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function switchMode(mode) {
+        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('panel-design').style.display = mode === 'design' ? 'block' : 'none';
+        document.getElementById('panel-fill').style.display = mode === 'fill' ? 'flex' : 'none';
+        
+        document.getElementById('layer-design').style.display = mode === 'design' ? 'block' : 'none';
+        document.getElementById('layer-fill').style.display = mode === 'fill' ? 'block' : 'none';
+        document.getElementById('layer-guides').innerHTML = '';
+
+        selectedId = null;
+        document.getElementById('properties-panel').style.display = 'none';
+        renderDesign();
+        if(mode === 'fill') refreshConfigLists();
+    }
+
+    function addField(type) {
+        pushHistory(); 
+        const nameInput = document.getElementById('newFieldName');
+        const name = nameInput.value || (type === 'text' ? 'New Text' : (type === 'qr' ? 'QR Code' : 'Photo Box'));
+        
+        const field = {
+            id: Date.now(),
+            name: name,
+            type: type,
+            x: 50, y: 50,
+            w: type === 'text' ? 200 : 100,
+            h: type === 'text' ? 30 : 100,
+            fontSize: 20,
+            color: '#000000',
+            opacity: 1,
+            zIndex: 10 + fields.length,
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 'normal',
+            fontStyle: 'normal',
+            isStatic: false,
+            options: '',
+            fit: 'fill'
+        };
+        fields.push(field);
+        renderDesign();
+        selectField(field.id);
+        nameInput.value = '';
+    }
+
+    function renderDesign() {
+        const container = document.getElementById('layer-design');
+        container.innerHTML = '';
+        
+        fields.sort((a,b) => (a.zIndex || 0) - (b.zIndex || 0)).forEach(f => {
+            const el = document.createElement('div');
+            el.className = `designer-field ${f.id === selectedId ? 'selected' : ''} ${f.isStatic ? 'is-static' : ''}`;
+            el.style.left = f.x + 'px';
+            el.style.top = f.y + 'px';
+            el.style.width = f.w + 'px';
+            el.style.height = f.h + 'px';
+            el.style.zIndex = f.zIndex || 10;
+            el.style.opacity = f.opacity !== undefined ? f.opacity : 1;
+            
+            if(f.type === 'text') {
+                el.innerText = f.name;
+                el.style.fontSize = f.fontSize + 'px';
+                el.style.color = f.color;
+                el.style.fontFamily = f.fontFamily;
+                el.style.fontWeight = f.fontWeight;
+                el.style.fontStyle = f.fontStyle;
+                if(f.id !== selectedId && !f.isStatic) el.style.border = '1px dashed ' + (f.color || '#000');
+            } else if (f.type === 'qr') {
+                el.style.background = 'rgba(255,255,255,0.8)';
+                el.style.border = '2px solid black';
+                el.style.justifyContent = 'center';
+                el.style.fontSize = '10px';
+                el.innerText = 'QR: ' + f.name;
+            } else {
+                el.innerText = '📷 ' + f.name;
+                el.style.justifyContent = 'center';
+                el.style.background = 'rgba(0,0,0,0.1)';
+                if(f.id !== selectedId) el.style.border = '1px solid #ccc';
+            }
+
+            el.onmousedown = (e) => startDrag(e, f.id);
+            
+            const handle = document.createElement('div');
+            handle.className = 'resize-handle';
+            handle.onmousedown = (e) => { e.stopPropagation(); startResize(e, f.id); };
+            el.appendChild(handle);
+            container.appendChild(el);
+        });
+    }
+
+    function selectField(id) {
+        selectedId = id;
+        const f = fields.find(x => x.id === id);
+        if(!f) return;
+
+        document.getElementById('properties-panel').style.display = 'block';
+        document.getElementById('prop-text').value = f.name;
+        document.getElementById('prop-opacity').value = Math.round((f.opacity !== undefined ? f.opacity : 1) * 100);
+        
+        if(f.type === 'text') {
+            document.getElementById('prop-text-features').style.display = 'block';
+            document.getElementById('prop-photo-features').style.display = 'none';
+            document.getElementById('prop-static').checked = f.isStatic || false;
+            document.getElementById('prop-options').value = f.options || '';
+            document.getElementById('prop-options-box').style.display = f.isStatic ? 'none' : 'block';
+            document.getElementById('prop-size').value = f.fontSize;
+            document.getElementById('prop-color').value = f.color;
+            document.getElementById('prop-font').value = f.fontFamily;
+            document.getElementById('prop-weight').value = f.fontWeight;
+            document.getElementById('prop-style').value = f.fontStyle;
+            document.querySelectorAll('.prop-grid input, .prop-grid select').forEach(i => i.disabled = false);
+        } else {
+            document.getElementById('prop-text-features').style.display = 'none';
+            if(f.type === 'photo') {
+                document.getElementById('prop-photo-features').style.display = 'block';
+                document.getElementById('prop-fit').value = f.fit || 'fill';
+            } else {
+                document.getElementById('prop-photo-features').style.display = 'none';
+            }
+            document.querySelectorAll('.prop-grid input, .prop-grid select').forEach(i => {
+                if(i.id !== 'prop-opacity') i.disabled = true;
+            });
+        }
+        renderDesign();
+    }
+
+    function updateProp(key, value) {
+        if(!selectedId) return;
+        const f = fields.find(x => x.id === selectedId);
+        f[key] = value;
+        if(key === 'isStatic') {
+            document.getElementById('prop-options-box').style.display = value ? 'none' : 'block';
+        }
+        renderDesign();
+    }
+    
+    function moveLayer(dir) {
+        if(!selectedId) return;
+        const f = fields.find(x => x.id === selectedId);
+        f.zIndex = (f.zIndex || 10) + dir;
+        renderDesign();
+    }
+
+    function deleteSelected() {
+        pushHistory();
+        fields = fields.filter(f => f.id !== selectedId);
+        selectedId = null;
+        document.getElementById('properties-panel').style.display = 'none';
+        renderDesign();
+    }
+
+    function clearCanvas() {
+        if(confirm("Clear all elements?")) {
+            pushHistory();
+            fields = [];
+            selectedId = null;
+            renderDesign();
+            document.getElementById('properties-panel').style.display = 'none';
+        }
+    }
+
+    function startDrag(e, id) {
+        if(isPanning || e.altKey) return;
+        pushHistory();
+        selectField(id);
+        const f = fields.find(x => x.id === id);
+        
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const origX = f.x;
+        const origY = f.y;
+
+        const others = fields.filter(o => o.id !== id).map(o => ({
+            l: o.x, r: o.x + o.w, c: o.x + o.w/2,
+            t: o.y, b: o.y + o.h, m: o.y + o.h/2
+        }));
+
+        const move = (ev) => {
+            let deltaX = (ev.clientX - startX) / scale;
+            let deltaY = (ev.clientY - startY) / scale;
+            let nx = origX + deltaX;
+            let ny = origY + deltaY;
+
+            const guides = document.getElementById('layer-guides');
+            guides.innerHTML = '';
+            const snap = 5; 
+
+            if(!e.shiftKey) {
+                const myW = f.w;
+                const myC = nx + myW/2;
+                for(let o of others) {
+                    if(Math.abs(nx - o.l) < snap) { nx = o.l; drawVGuide(o.l); break; }
+                    if(Math.abs(nx - o.r) < snap) { nx = o.r; drawVGuide(o.r); break; }
+                    if(Math.abs(myC - o.c) < snap) { nx = o.c - myW/2; drawVGuide(o.c); break; }
+                }
+            }
+
+            if(!e.shiftKey) {
+                const myH = f.h;
+                const myM = ny + myH/2; 
+                for(let o of others) {
+                    if(Math.abs(ny - o.t) < snap) { ny = o.t; drawHGuide(o.t); break; }
+                    if(Math.abs(ny - o.b) < snap) { ny = o.b; drawHGuide(o.b); break; }
+                    if(Math.abs(myM - o.m) < snap) { ny = o.m - myH/2; drawHGuide(o.m); break; }
+                }
+            }
+
+            f.x = nx;
+            f.y = ny;
+            renderDesign();
+        };
+
+        const stop = () => { 
+            document.getElementById('layer-guides').innerHTML = '';
+            window.removeEventListener('mousemove', move); 
+            window.removeEventListener('mouseup', stop); 
+        };
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', stop);
+    }
+
+    function drawVGuide(x) {
+        const d = document.createElement('div');
+        d.className = 'guide-line guide-v';
+        d.style.left = x + 'px';
+        document.getElementById('layer-guides').appendChild(d);
+    }
+    function drawHGuide(y) {
+        const d = document.createElement('div');
+        d.className = 'guide-line guide-h';
+        d.style.top = y + 'px';
+        document.getElementById('layer-guides').appendChild(d);
+    }
+
+    function startResize(e, id) {
+        pushHistory();
+        const f = fields.find(x => x.id === id);
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const origW = f.w;
+        const origH = f.h;
+
+        const move = (ev) => {
+            const deltaX = (ev.clientX - startX) / scale;
+            const deltaY = (ev.clientY - startY) / scale;
+            f.w = Math.max(20, origW + deltaX);
+            f.h = Math.max(20, origH + deltaY);
+            renderDesign();
+        };
+
+        const stop = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); };
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', stop);
+    }
+
+    function saveConfig() {
+        const name = document.getElementById('configName').value;
+        if(!name) return alert("Enter Name");
+        const configs = JSON.parse(localStorage.getItem('id_configs') || '[]');
+        const newConfigs = configs.filter(c => c.name !== name); 
+        newConfigs.push({ name, fields });
+        localStorage.setItem('id_configs', JSON.stringify(newConfigs));
+        alert("Saved!");
+        refreshConfigLists();
+    }
+
+    function deleteConfig() {
+        const name = document.getElementById('editConfigSelect').value;
+        if(!name) return alert("Select template");
+        if(confirm("Delete " + name + "?")) {
+            const configs = JSON.parse(localStorage.getItem('id_configs') || '[]');
+            const newConfigs = configs.filter(c => c.name !== name);
+            localStorage.setItem('id_configs', JSON.stringify(newConfigs));
+            refreshConfigLists();
+        }
+    }
+
+    function refreshConfigLists() {
+        const configs = JSON.parse(localStorage.getItem('id_configs') || '[]');
+        const fillSel = document.getElementById('configSelect');
+        fillSel.innerHTML = '<option value="">-- Select --</option>';
+        const editSel = document.getElementById('editConfigSelect');
+        editSel.innerHTML = '<option value="">-- Select --</option>';
+
+        configs.forEach(c => {
+            fillSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+            editSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+        });
+    }
+
+    function loadDesignToEdit() {
+        const name = document.getElementById('editConfigSelect').value;
+        if(!name) return;
+        const configs = JSON.parse(localStorage.getItem('id_configs') || '[]');
+        const config = configs.find(c => c.name === name);
+        if(!config) return;
+        pushHistory(); 
+        fields = config.fields;
+        fields.forEach((f, i) => {
+            if(f.zIndex === undefined) f.zIndex = 10 + i;
+            if(f.opacity === undefined) f.opacity = 1;
+            if(f.fit === undefined) f.fit = 'fill'; 
+        });
+        document.getElementById('configName').value = config.name;
+        renderDesign();
+    }
+
+    function exportConfigs() {
+        const data = localStorage.getItem('id_configs');
+        if(!data) return alert("No data");
+        const blob = new Blob([data], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'SAHU_GSK_Backup.json';
+        a.click();
+    }
+
+    function importConfigs(file) {
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if(!Array.isArray(data)) throw new Error();
+                if(confirm("Merge backup?")) {
+                    localStorage.setItem('id_configs', JSON.stringify(data));
+                    refreshConfigLists();
+                    alert("Imported!");
+                }
+            } catch(err) { alert("Invalid File"); }
+        };
+        reader.readAsText(file);
+    }
+
+    function loadConfig() {
+        const name = document.getElementById('configSelect').value;
+        if(!name) return;
+        const configs = JSON.parse(localStorage.getItem('id_configs') || '[]');
+        const config = configs.find(c => c.name === name);
+        if(!config) return;
+
+        const formBox = document.getElementById('form-container');
+        const layerFill = document.getElementById('layer-fill');
+        formBox.innerHTML = '';
+        layerFill.innerHTML = '';
+
+        config.fields.sort((a,b) => (a.y - b.y)).forEach(f => {
+            if(!f.isStatic) {
+                const group = document.createElement('div');
+                group.className = 'control-group';
+                group.innerHTML = `<label>${f.name}</label>`;
+                
+                if(f.type === 'text') {
+                    if (f.options && f.options.length > 0) {
+                        const sel = document.createElement('select');
+                        sel.innerHTML = '<option value="">-- Select --</option>';
+                        f.options.split(',').forEach(opt => {
+                            opt = opt.trim();
+                            if(opt) sel.innerHTML += `<option value="${opt}">${opt}</option>`;
+                        });
+                        sel.onchange = (e) => { document.getElementById(`live-${f.id}`).innerText = e.target.value; };
+                        group.appendChild(sel);
+                    } else {
+                        const input = document.createElement('textarea');
+                        input.rows = 2;
+                        input.oninput = (e) => { document.getElementById(`live-${f.id}`).innerText = e.target.value; };
+                        group.appendChild(input);
+                    }
+                } else if(f.type === 'qr') {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = "Enter Data";
+                    input.oninput = (e) => { 
+                        const el = document.getElementById(`live-${f.id}`);
+                        el.style.backgroundImage = `url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(e.target.value)}')`;
+                        el.style.backgroundSize = 'contain';
+                    };
+                    group.appendChild(input);
+                } else {
+                    const input = document.createElement('input');
+                    input.type = 'file'; input.accept = 'image/*';
+                    input.onchange = (e) => {
+                        if(e.target.files[0]) {
+                            const r = new FileReader();
+                            r.onload = (ev) => document.getElementById(`live-${f.id}`).src = ev.target.result;
+                            r.readAsDataURL(e.target.files[0]);
+                        }
+                    };
+                    group.appendChild(input);
+                }
+                formBox.appendChild(group);
+            }
+
+            let viz;
+            if(f.type === 'text') {
+                viz = document.createElement('div');
+                viz.innerText = f.isStatic ? f.name : ''; 
+                viz.style.color = f.color;
+                viz.style.fontSize = f.fontSize + 'px';
+                viz.style.fontFamily = f.fontFamily;
+                viz.style.fontWeight = f.fontWeight;
+                viz.style.fontStyle = f.fontStyle;
+            } else if (f.type === 'qr') {
+                viz = document.createElement('div');
+                viz.style.border = '1px solid black';
+            } else {
+                viz = document.createElement('img');
+                viz.style.objectFit = f.fit || 'fill';
+            }
+
+            viz.id = `live-${f.id}`;
+            viz.className = f.type === 'text' ? 'live-field' : 'live-photo';
+            
+            viz.style.left = f.x + 'px';
+            viz.style.top = f.y + 'px';
+            viz.style.width = f.w + 'px';
+            viz.style.height = f.h + 'px';
+            
+            if(f.type === 'text') {
+                viz.style.display = 'flex';
+                viz.style.alignItems = 'flex-start'; 
+            }
+
+            viz.style.zIndex = f.zIndex || 10;
+            viz.style.opacity = f.opacity !== undefined ? f.opacity : 1;
+            layerFill.appendChild(viz);
+        });
+    }
+
+    function downloadImage() {
+        const wrapper = document.getElementById('canvas-wrapper');
+        const originalTransform = wrapper.style.transform;
+        wrapper.style.transform = 'scale(1)'; 
+        
+        html2canvas(wrapper, {
+            scale: 2, 
+            useCORS: true,
+            backgroundColor: null
+        }).then(canvas => {
+            wrapper.style.transform = originalTransform;
+            const link = document.createElement('a');
+            link.download = 'ID-Card-Output.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }).catch(err => {
+            alert("Error: Internet required for image generation.");
+            wrapper.style.transform = originalTransform;
+        });
+    }
+</script>
+</body>
+</html>
